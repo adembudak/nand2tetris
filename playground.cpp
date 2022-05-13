@@ -1,44 +1,55 @@
+#include <array>
 #include <concepts>
-#include <tuple>
 
 // clang-format off
 template <typename T>
 concept Boolean = std::convertible_to<T, bool>;
 
-consteval bool NOT  (Boolean auto... bs) { return !(bs, ...);      }
-consteval bool AND  (Boolean auto... bs) { return (... && bs);     }
-consteval bool NAND (Boolean auto... bs) { return NOT(AND(bs...)); }
-consteval bool OR   (Boolean auto... bs) { return (... || bs);     }
-consteval bool NOR  (Boolean auto... bs) { return NOT(OR(bs...));  }
-consteval bool XOR  (Boolean auto... bs) { return (bs ^ ...);      }
-consteval bool XNOR (Boolean auto... bs) { return NOT((bs ^ ...)); }
+consteval bool Not  (Boolean auto... bs) { return !(bs, ...);      }
+consteval bool And  (Boolean auto... bs) { return (... && bs);     }
+consteval bool Nand (Boolean auto... bs) { return Not(And(bs...)); }
+consteval bool Or   (Boolean auto... bs) { return (... || bs);     }
+consteval bool Nor  (Boolean auto... bs) { return Not(Or(bs...));  }
+consteval bool Xor  (Boolean auto... bs) { return (bs ^ ...);      }
+consteval bool Xnor (Boolean auto... bs) { return Not((bs ^ ...)); }
 
-consteval bool MUX2x1(bool a, bool b, bool sel, bool enabled = true) 
-{ return AND(enabled, OR(AND(a, NOT(sel)), AND(b, sel))); }
+consteval bool Mux(bool a, bool b, bool sel, bool enabled = true) 
+{ return And(enabled, Or(And(a, Not(sel)), And(b, sel))); }
+
+consteval std::array<bool, 2> Dmux(bool in, bool sel, bool enable = true) 
+{ return {And(enable, And(Not(sel), in)), And(enable, And(sel, in))}; }
 
 // clang-format on
 
 int main() {
   { // xor properties
     constexpr bool a = true, b = true;
-    static_assert(XOR(a, true) == NOT(a));
-    static_assert(XOR(a, a) == false);
-    static_assert(XOR(NOT(a), a) == true);
+    static_assert(Xor(a, true) == Not(a));
+    static_assert(Xor(a, a) == false);
+    static_assert(Xor(Not(a), a) == true);
   }
 
   { // nand properties
     constexpr bool a = true, b = true;
-    static_assert(NAND(a, b) == NOT(AND(a, b)));
-    static_assert(NAND(a, true) == NOT(AND(a, true)));
-    static_assert(NAND(1, 1) == 0);
-    static_assert(NAND(1, 0) == 1);
-    static_assert(NAND(a, true) == NOT(a));
+    static_assert(Nand(a, b) == Not(And(a, b)));
+    static_assert(Nand(a, true) == Not(And(a, true)));
+    static_assert(Nand(1, 1) == 0);
+    static_assert(Nand(1, 0) == 1);
+    static_assert(Nand(a, true) == Not(a));
   }
 
   { // mux2x1
     constexpr bool a = true, b = false;
-    static_assert(MUX2x1(a, b, 0) == a);
-    static_assert(MUX2x1(a, b, 1) == b);
-    static_assert(MUX2x1(a, b, 1, /*disabled*/ false) == false);
+    static_assert(Mux(a, b, 0) == a);
+    static_assert(Mux(a, b, 1) == b);
+    static_assert(Mux(a, b, 1, /*disabled*/ false) == false);
+  }
+
+  { // dmux2x1
+    constexpr bool in = true, sel = true;
+    constexpr auto ret = Dmux(in, sel);
+
+    static_assert(ret[0] == false);
+    static_assert(ret[1] == true);
   }
 }
