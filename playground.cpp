@@ -76,6 +76,21 @@ concept Boolean = std::convertible_to<T, bool>;
   return {sum, Or(carry_, carry)};
 }
 
+// Based on: http://www.spec.gmu.edu/~pparis/classes/notes_101/node113.html
+[[nodiscard]] consteval std::array<bool, 16> Add16(std::array<bool,16> a, std::array<bool, 16> b) {
+  std::array<bool, 16> result{};
+
+  auto [s0, carry] = HalfAdder(a[0], b[0]);
+  result[0] = s0;
+
+  for (auto i = 1uz; i < std::size(a); ++i)  {
+    auto [s_i, carry_i] = FullAdder(a[i], b[i], carry);
+    result[i] = s_i; carry = carry_i;
+  }
+  
+  return result;
+}
+
 // clang-format on
 int main() {
   { // Xor properties
@@ -190,5 +205,29 @@ int main() {
                   FullAdder(1, 0, 1) == std::array<bool, 2>{0, 1} and //
                   FullAdder(1, 1, 0) == std::array<bool, 2>{0, 1} and //
                   FullAdder(1, 1, 1) == std::array<bool, 2>{1, 1});
+  }
+
+  { // Add16
+    constexpr std::array<bool, 16> a{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    constexpr std::array<bool, 16> b{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+
+    constexpr auto result = Add16(a, b);
+
+    static_assert(result[0] == 0 and  //
+                  result[1] == 1 and  //
+                  result[2] == 1 and  //
+                  result[3] == 1 and  //
+                  result[4] == 1 and  //
+                  result[5] == 1 and  //
+                  result[6] == 1 and  //
+                  result[7] == 1 and  //
+                  result[8] == 1 and  //
+                  result[9] == 1 and  //
+                  result[10] == 1 and //
+                  result[11] == 1 and //
+                  result[12] == 1 and //
+                  result[13] == 1 and //
+                  result[14] == 1 and //
+                  result[15] == 1);
   }
 }
