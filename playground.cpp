@@ -65,6 +65,17 @@ concept Boolean = std::convertible_to<T, bool>;
   return {a, b, c, d, e, f, g, h};
 }
 
+[[nodiscard]] consteval std::array<bool, 2> HalfAdder(bool a, bool b) {
+  return {Xor(a, b), And(a, b)};
+}
+
+[[nodiscard]] consteval std::array<bool, 2> FullAdder(bool a, bool b, bool c) {
+  auto [sum_, carry_] = HalfAdder(a, b);
+  auto [sum, carry] = HalfAdder(c, sum_);
+
+  return {sum, Or(carry_, carry)};
+}
+
 // clang-format on
 int main() {
   { // Xor properties
@@ -143,6 +154,7 @@ int main() {
                   result[2] == false and //
                   result[3] == true);
   }
+
   { // DMux8Way
     constexpr bool in = true;
     constexpr std::array<bool, 3> sel{true, true, true};
@@ -157,5 +169,26 @@ int main() {
                   result[5] == false and //
                   result[6] == false and //
                   result[7] == true);
+  }
+
+  { //  HalfAdder
+
+    static_assert(HalfAdder(0, 0) == std::array<bool, 2>{0, 0} and //
+                  HalfAdder(0, 1) == std::array<bool, 2>{1, 0} and //
+                  HalfAdder(1, 0) == std::array<bool, 2>{1, 0} and //
+                  HalfAdder(1, 1) == std::array<bool, 2>{0, 1});
+  }
+
+  { // FullAdder
+
+    //                      a  b  Cin                     Sum  Carry
+    static_assert(FullAdder(0, 0, 0) == std::array<bool, 2>{0, 0} and //
+                  FullAdder(0, 0, 1) == std::array<bool, 2>{1, 0} and //
+                  FullAdder(0, 1, 0) == std::array<bool, 2>{1, 0} and //
+                  FullAdder(0, 1, 1) == std::array<bool, 2>{0, 1} and //
+                  FullAdder(1, 0, 0) == std::array<bool, 2>{1, 0} and //
+                  FullAdder(1, 0, 1) == std::array<bool, 2>{0, 1} and //
+                  FullAdder(1, 1, 0) == std::array<bool, 2>{0, 1} and //
+                  FullAdder(1, 1, 1) == std::array<bool, 2>{1, 1});
   }
 }
