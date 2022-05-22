@@ -17,6 +17,33 @@ concept Boolean = std::convertible_to<T, bool>;
 [[nodiscard]] consteval bool Xor  (Boolean auto... bs) { return (bs ^ ...);      }
 [[nodiscard]] consteval bool Xnor (Boolean auto... bs) { return Not((bs ^ ...)); }
 
+[[nodiscard]] consteval std::array<bool, 16> Not16(std::array<bool, 16> a) {
+   std::array<bool, 16> result;
+
+   for(auto i = 0uz; i < std::size(result); ++i)
+     result[i] = Not(a[i]);
+
+   return result;
+}
+
+[[nodiscard]] consteval std::array<bool, 16> And16(std::array<bool, 16> a, std::array<bool, 16> b) {
+   std::array<bool, 16> result;
+
+   for(auto i = 0uz; i < std::size(result); ++i)
+     result[i] = And(a[i], b[i]);
+
+   return result;
+}
+
+[[nodiscard]] consteval std::array<bool, 16> Or16(std::array<bool, 16> a, std::array<bool, 16> b) {
+   std::array<bool, 16> result;
+
+   for(auto i = 0uz; i < std::size(result); ++i)
+     result[i] = Or(a[i], b[i]);
+
+   return result;
+}
+
 [[nodiscard]] consteval bool Mux(bool a, bool b, bool sel, bool enabled = true) 
 { return And(enabled, Or(And(a, Not(sel)), And(b, sel))); }
 
@@ -94,5 +121,6 @@ concept Boolean = std::convertible_to<T, bool>;
   
   return result;
 }
+
 
 }

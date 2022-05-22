@@ -21,6 +21,71 @@ int main() {
     static_assert(Nand(a, true) == Not(a));
   }
 
+  { // Not16
+    constexpr std::array<bool, 16> a{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    constexpr auto result = Not16(a);
+
+    static_assert(result[0] == 1 and  //
+                  result[1] == 1 and  //
+                  result[2] == 1 and  //
+                  result[3] == 1 and  //
+                  result[4] == 1 and  //
+                  result[5] == 1 and  //
+                  result[6] == 1 and  //
+                  result[7] == 1 and  //
+                  result[8] == 1 and  //
+                  result[9] == 1 and  //
+                  result[10] == 1 and //
+                  result[11] == 1 and //
+                  result[12] == 1 and //
+                  result[14] == 1 and //
+                  result[15] == 1);
+  }
+
+  { // And16
+    constexpr std::array<bool, 16> a{0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
+    constexpr std::array<bool, 16> b{1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0};
+    constexpr auto result = And16(a, b);
+
+    static_assert(result[0] == 0 and  //
+                  result[1] == 0 and  //
+                  result[2] == 0 and  //
+                  result[3] == 0 and  //
+                  result[4] == 0 and  //
+                  result[5] == 0 and  //
+                  result[6] == 0 and  //
+                  result[7] == 0 and  //
+                  result[8] == 0 and  //
+                  result[9] == 0 and  //
+                  result[10] == 0 and //
+                  result[11] == 0 and //
+                  result[12] == 0 and //
+                  result[14] == 0 and //
+                  result[15] == 0);
+  }
+
+  { // Or16
+    constexpr std::array<bool, 16> a{0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
+    constexpr std::array<bool, 16> b{1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0};
+    constexpr auto result = Or16(a, b);
+
+    static_assert(result[0] == 1 and  //
+                  result[1] == 1 and  //
+                  result[2] == 1 and  //
+                  result[3] == 1 and  //
+                  result[4] == 1 and  //
+                  result[5] == 1 and  //
+                  result[6] == 1 and  //
+                  result[7] == 1 and  //
+                  result[8] == 1 and  //
+                  result[9] == 1 and  //
+                  result[10] == 1 and //
+                  result[11] == 1 and //
+                  result[12] == 1 and //
+                  result[14] == 1 and //
+                  result[15] == 1);
+  }
+
   { // Mux
     constexpr bool a = true, b = false;
     static_assert(Mux(a, b, 0) == a);
