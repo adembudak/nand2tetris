@@ -1,6 +1,7 @@
 #include "cpu.hpp"
 
 #include <array>
+#include <ranges>
 
 int main() {
   using namespace nand2tetris;
@@ -206,5 +207,24 @@ int main() {
                   result[13] == 1 and //
                   result[14] == 1 and //
                   result[15] == 1);
+  }
+
+  { // ALU
+
+    // |        x         |        y         |zx |nx |zy |ny | f |no |       out        |zr |ng |
+    // | 0000000000000000 | 1111111111111111 | 1 | 0 | 1 | 0 | 1 | 0 | 0000000000000000 | 1 | 0 |
+    constexpr std::array<bool, 16> x{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    constexpr std::array<bool, 16> y{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+
+    constexpr std::array<bool, 16> expected_data{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    constexpr ALU_stat expected_stat = ALU_stat{.zr = 1, .ng = 0};
+
+    constexpr std::tuple result = ALU(x, y, ALU_flags{.zx = 1, .nx = 0, .zy = 1, .ny = 0, .f = 1, .no = 0});
+    constexpr auto data = std::get<0>(result);
+    constexpr auto stat = std::get<1>(result);
+
+    static_assert(std::ranges::equal(data, expected_data));
+    static_assert(stat.zr == expected_stat.zr and //
+                  stat.ng == expected_stat.ng);
   }
 }

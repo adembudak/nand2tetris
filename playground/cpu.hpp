@@ -1,8 +1,10 @@
 #pragma once
 // clang-format off
 
+#include <algorithm>
 #include <array>
 #include <concepts>
+#include <tuple>
 
 namespace nand2tetris {
 
@@ -122,5 +124,44 @@ concept Boolean = std::convertible_to<T, bool>;
   return result;
 }
 
+struct ALU_flags {
+  bool zx; 
+  bool nx;
+
+  bool zy; 
+  bool ny;
+
+  bool f;
+  bool no;
+};
+
+struct ALU_stat {
+  bool zr;
+  bool ng;
+};
+
+[[nodiscard]] consteval std::tuple<std::array<bool, 16>, ALU_stat> ALU(std::array<bool, 16> x, std::array<bool, 16> y, ALU_flags flags) {
+   std::array<bool, 16> result{};
+   ALU_stat status;
+
+   if(flags.zx) x.fill(false);
+   if(flags.nx) x = Not16(x);
+
+   if(flags.zy) y.fill(false);
+   if(flags.ny) y = Not16(y);
+
+   if (flags.f) result = Add16(x, y);
+   else   result = And16(x, y);
+
+   if (flags.no) result = Not16(result);
+
+   if (std::all_of(begin(result), end(result), [](bool b) { return b == false;})) status.zr = 1;
+   else status.zr = 0;
+
+   if (result[15]) status.ng = 1;
+   else            status.ng = 0;
+
+   return {result, status};
+}
 
 }
