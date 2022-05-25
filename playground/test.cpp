@@ -87,6 +87,11 @@ int main() {
                   result[15] == 1);
   }
 
+  { // Or8Way
+    constexpr std::array<bool, 8> in{1, 0, 0, 0, 0, 0, 0, 0};
+    static_assert(Or8Way(in) == 1);
+  }
+
   { // Mux
     constexpr bool a = true, b = false;
     static_assert(Mux(a, b, 0) == a);

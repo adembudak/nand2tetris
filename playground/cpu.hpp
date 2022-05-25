@@ -46,6 +46,10 @@ concept Boolean = std::convertible_to<T, bool>;
    return result;
 }
 
+[[nodiscard]] consteval bool Or8Way(std::array<bool, 8> in) {
+   return Or(in[0], in[1], in[2], in[3], in[4], in[5], in[6],in[7]);
+}
+
 [[nodiscard]] consteval bool Mux(bool a, bool b, bool sel, bool enabled = true) 
 { return And(enabled, Or(And(a, Not(sel)), And(b, sel))); }
 
