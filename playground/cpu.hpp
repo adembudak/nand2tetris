@@ -128,6 +128,10 @@ concept Boolean = std::convertible_to<T, bool>;
   return result;
 }
 
+[[nodiscard]] consteval std::array<bool, 16> Inc16(std::array<bool, 16> a) {
+  return Add16(a, {true});
+}
+
 struct ALU_flags {
   bool zx; 
   bool nx;

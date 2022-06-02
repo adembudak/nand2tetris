@@ -216,6 +216,71 @@ int main() {
                   result[15] == 1);
   }
 
+  { // Inc16
+
+    constexpr std::array<bool, 16> a{};
+    constexpr auto result0 = Inc16(a); // expect result = 1;
+
+    static_assert(result0[0] == 1 and  //
+                  result0[1] == 0 and  //
+                  result0[2] == 0 and  //
+                  result0[3] == 0 and  //
+                  result0[4] == 0 and  //
+                  result0[5] == 0 and  //
+                  result0[6] == 0 and  //
+                  result0[7] == 0 and  //
+                  result0[8] == 0 and  //
+                  result0[9] == 0 and  //
+                  result0[10] == 0 and //
+                  result0[11] == 0 and //
+                  result0[12] == 0 and //
+                  result0[13] == 0 and //
+                  result0[14] == 0 and //
+                  result0[15] == 0);
+
+    ////
+    constexpr std::array<bool, 16> b{1, 0, 1}; // 5
+    constexpr auto result1 = Inc16(b);         // expect result = 6
+
+    static_assert(result1[0] == 0 and  //
+                  result1[1] == 1 and  //
+                  result1[2] == 1 and  //
+                  result0[3] == 0 and  //
+                  result0[4] == 0 and  //
+                  result0[5] == 0 and  //
+                  result0[6] == 0 and  //
+                  result0[7] == 0 and  //
+                  result0[8] == 0 and  //
+                  result0[9] == 0 and  //
+                  result0[10] == 0 and //
+                  result0[11] == 0 and //
+                  result0[12] == 0 and //
+                  result0[13] == 0 and //
+                  result0[14] == 0 and //
+                  result0[15] == 0);
+
+    ////
+    constexpr std::array<bool, 16> c{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; // -1
+    constexpr auto result2 = Inc16(c);
+
+    static_assert(result2[0] == 0 and  //
+                  result2[1] == 0 and  //
+                  result2[2] == 0 and  //
+                  result2[3] == 0 and  //
+                  result2[4] == 0 and  //
+                  result2[5] == 0 and  //
+                  result2[6] == 0 and  //
+                  result2[7] == 0 and  //
+                  result2[8] == 0 and  //
+                  result2[9] == 0 and  //
+                  result2[10] == 0 and //
+                  result2[11] == 0 and //
+                  result2[12] == 0 and //
+                  result2[13] == 0 and //
+                  result2[14] == 0 and //
+                  result2[15] == 0);
+  }
+
   { // ALU
 
     // |        x         |        y         |zx |nx |zy |ny | f |no |       out        |zr |ng |
