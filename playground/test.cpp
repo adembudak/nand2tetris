@@ -118,10 +118,12 @@ int main() {
 
     static_assert(result[0] == true and  //
                   result[1] == false and //
-                  result[2] == true);
+                  result[2] == true and  //
+                  result[3] == true and  //
+                  result[4] == false);
   }
 
-  { // Mux4Way16
+  { // Mux8Way16
     constexpr std::array<bool, 16> a{}, b{}, c{}, d{}, e{}, f{}, g{}, h{false, true, false};
     constexpr std::array<bool, 3> sel{true, true, true};
 
@@ -135,10 +137,10 @@ int main() {
   { // Dmux
     constexpr bool in = true, sel = true;
 
-    constexpr auto ret = DMux(in, sel);
+    constexpr auto result = DMux(in, sel);
 
-    static_assert(ret[0] == false and //
-                  ret[1] == true);
+    static_assert(result[0] == false and //
+                  result[1] == true);
   }
 
   { // DMux4Way
