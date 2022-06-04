@@ -19,6 +19,9 @@ concept Boolean = std::convertible_to<T, bool>;
 [[nodiscard]] consteval bool Xor  (Boolean auto... bs) { return (bs ^ ...);      }
 [[nodiscard]] consteval bool Xnor (Boolean auto... bs) { return Not((bs ^ ...)); }
 
+[[nodiscard]] consteval bool Null (Boolean auto ... bs) { return And(bs..., 0); }
+[[nodiscard]] consteval bool Identity (Boolean auto ... bs) { return Or(bs..., 1); }
+
 [[nodiscard]] consteval std::array<bool, 16> Not16(std::array<bool, 16> a) {
    std::array<bool, 16> result;
 
