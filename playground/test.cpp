@@ -6,6 +6,52 @@
 int main() {
   using namespace nand2tetris;
 
+  { // Postulates and Theorems of Boolean Algebra, from Digital Design by Mano, Ciletti pp. 59
+#define Truthy static_assert
+
+    constexpr bool x{};
+    constexpr bool y{};
+    constexpr bool z{};
+
+    Truthy(Or(x, 0) == x); // Postulate 2
+    Truthy(And(x, 1) == x);
+
+    Truthy(Or(x, Not(x)) == 1); // Postulate 5
+    Truthy(And(x, Not(x)) == 0);
+
+    Truthy(Or(x, x) == x); //Theorem 1
+    Truthy(And(x, x) == x);
+
+    Truthy(Or(x, 1) == 1); // Theorem 2
+    Truthy(And(x, 0) == 0);
+
+    Truthy(Not(Not(x)) == x); // Theorem 3, involution
+
+    Truthy(Or(x, y) == Or(y, x)); // Postulate 3, commutative
+    Truthy(And(x, y) == And(y, x));
+
+    Truthy(Or(x, Or(y, z)) == Or(Or(x, y), z)); // Theorem 4, associative
+    Truthy(And(x, And(y, z)) == And(And(x, y), z));
+
+    Truthy(And(x, Or(y, z)) == Or(And(x, y), And(y, z))); // Postulate 4 distributive
+    Truthy(Or(x, And(y, z) == And(Or(x, y), Or(x, z))));
+
+    Truthy(Not(Or(x, y)) == And(Not(x), Not(y))); // Theorem 5, DeMorgan
+    Truthy(Not(And(x, y)) == Or(Not(x), Not(y)));
+
+    Truthy(Or(x, And(x, y)) == x); // Theorem 6. Absortion
+    Truthy(And(x, Or(x, y)) == x);
+
+    { // Absortion proof
+      static_assert(Or(x, And(x, y)) == x);
+      static_assert(Or(x, And(x, y)) == Or(And(x, 1), And(x, y)));
+      static_assert(Or(x, And(x, y)) == And(x, Or(1, y)));
+      static_assert(Or(x, And(x, y)) == And(x, Or(y, 1)));
+      static_assert(Or(x, And(x, y)) == And(x, 1));
+      static_assert(Or(x, And(x, y)) == x);
+    }
+  }
+
   { // Xor properties
     constexpr bool a = true;
     static_assert(Xor(a, true) == Not(a));
